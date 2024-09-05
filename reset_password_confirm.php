@@ -1,0 +1,151 @@
+<?php
+  require "connection.php";    
+  if(isset($_GET['token'])){
+    $token = $_GET['token'];
+    $sql ="SELECT email FROM password_reset_tokens WHERE token = '$token' AND expiration_time > NOW()";    
+    $result = $dbConn->query($sql);
+    if ($result->num_rows > 0){
+      $row = $result->fetch_assoc();
+      $email = $row['email'];
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="image/KopiCraftingLogo.png">
+    <title>Password Reset</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('image/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: repeat;
+        }
+
+        .wrapper{
+            top: 20px;
+            position: relative;
+            width: 400px;
+            height: 450px;
+            background: transparent;
+            border: 2px solid rgba(255,255,255,.5);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 30px rgba(0,0,0,.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrapper .form-login{
+            width: 100%;
+            padding: 40px;
+        }
+
+        .form-login h2{
+            font-size: 1.5em;
+            color: #281b12;
+            text-align: center;
+        }
+
+        .form-login .logo{
+            padding-top: 10px;
+        }
+
+        .form-login .logo img{
+            width: 150px;
+            height: 150px;
+        }
+        .input{
+            position: relative;
+            width: 100%;
+            height: 50px;
+            border-bottom: 2px solid #281b12;
+            margin: 30px 0;
+        }
+        .input label{
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            font-size: 1em;
+            color: #281b12;
+            font-weight: 500;
+            pointer-events: none;
+            transition: .5s;
+        }
+
+        .input input:focus~label, .input input:valid~label{
+            top: -5px;
+        }
+
+        .input input{
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1em;
+            color: #281b12;
+            font-weight: 600;
+            padding: 0 35px 0 5px;
+        }
+
+        .login_button{
+            width: 100%;
+            height: 45px;
+            background: #281b12;
+            border: none;
+            outline: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            color: #f8e2c7;
+            font-weight: 500;
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="form-login">
+            <div class="logo">
+                <center><img src="image/KopiCraftingLogo.png" alt="logo"></center>
+            </div>
+            <h2>Reset Password</h2>
+            <form method="post" action="reset_password.php">
+                <div class="input">
+                    <input type="hidden" name="email" value="<?php echo $email; ?>">
+                    <input type="password" id="password" name="password" required>
+                    <label>New Password</label>
+                </div>
+                <button type="submit" class="login_button" name="sub">Reset Password</button>
+            </form>
+        </div>
+</body>
+</html>
+
+
+<?php
+} else {
+	echo "Invalid token.";
+}
+} else {
+	echo "Token is missing.";
+}
+
+$dbConn->close();
